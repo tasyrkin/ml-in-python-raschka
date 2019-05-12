@@ -74,7 +74,7 @@ class Evaluation:
 
         plt.plot(minus_one[:, 0], minus_one[:, 1], 'ro')
         plt.plot(plus_one[:, 0], plus_one[:, 1], 'go')
-        x = np.linspace(-5,15,100)
+        x = np.linspace(-5,10,100)
         y = -(self.perceptron.weights[0] + x*self.perceptron.weights[2])/self.perceptron.weights[1]
         plt.plot(x, y, label = 'decision boundary')
         plt.show()
