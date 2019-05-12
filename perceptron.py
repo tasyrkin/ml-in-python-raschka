@@ -8,15 +8,12 @@ class Perceptron:
     def __init__(self, eta, epochs):
         self.eta = eta
         self.epochs = epochs
-        print("Configuring perceptron with eta [{}], epochs [{}]".format(eta, epochs))
 
     def __threshold_array__(self, net_sums):
-        print("net_sums: {}".format(net_sums))
         threshold_function = lambda x: 1 if x >= 0 else -1
         return np.array([threshold_function(x) for x in net_sums])
 
     def __threshold_number__(self, num):
-        print("num: {}".format(num))
         threshold_function = lambda x: 1 if x >= 0 else -1
         return threshold_function(num)
 
@@ -40,11 +37,9 @@ class Perceptron:
 
         # weights is a with 1 + Ndims elements
         self.weights = np.random.normal(loc = 0, scale = 1, size = x_train_with_bias.shape[0])
-        print("Initial weights: {}".format(self.weights))
         for epoch in range(self.epochs):
             y_current = self.__threshold_array__(np.dot(self.weights, x_train_with_bias))
             self.weights = self.weights + np.dot(self.eta * (y_labels - y_current), x_train_with_bias.transpose())
-            print("Epoch [{}], weights: {}".format(epoch, self.weights))
 
         print("Training completed successfully, weights: [{}]".format(self.weights))
 
@@ -64,24 +59,26 @@ class Perceptron:
         x_with_bias = np.concatenate((np.ones(shape = (1,)), x))
         return self.__threshold_number__(np.dot(self.weights, x_with_bias))
 
+class Evaluation:
+    def __init__(self, eta, epochs):
+        self.perceptron = Perceptron(eta, epochs)
 
-pn = Perceptron(eta=0.5, epochs=10)
+    def lineraly_separable(self):
+        minus_one = np.random.normal(loc = 0, scale = 1, size = (10,2))
+        plus_one = np.random.normal(loc = 3, scale = 1, size = (10,2))
+        x_train = np.concatenate((minus_one, plus_one))
 
-x_train = np.array(
-    [
-        [0,0], [0, 1], # -1 samples
-        [10,0], [10, 1], # 1 samples
-    ]
-)
+        y_lables = np.array([-1 for _ in range(10)] + [1 for _ in range(10)])
 
-plt.plot(x_train[:, 0], x_train[:, 1], 'ro')
-plt.axis([-1, 11, -1, 2])
-plt.show()
+        self.perceptron.fit(x_train=x_train, y_labels=y_lables)
 
-y_lables = np.array([-1, -1, 1, 1])
+        plt.plot(minus_one[:, 0], minus_one[:, 1], 'ro')
+        plt.plot(plus_one[:, 0], plus_one[:, 1], 'go')
+        x = np.linspace(-5,15,100)
+        y = -(self.perceptron.weights[0] + x*self.perceptron.weights[2])/self.perceptron.weights[1]
+        plt.plot(x, y, label = 'decision boundary')
+        plt.show()
 
-pn.fit(x_train=x_train, y_labels=y_lables)
 
-for row in range(x_train.shape[0]):
-    predicted = pn.predict(x_train[row])
-    print("Predicted [{}] for [{}]".format(predicted, x_train[row]))
+eval = Evaluation(eta = 0.5, epochs = 10)
+eval.lineraly_separable()
