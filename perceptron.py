@@ -1,5 +1,6 @@
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Perceptron:
@@ -72,6 +73,10 @@ x_train = np.array(
         [10,0], [10, 1], # 1 samples
     ]
 )
+
+plt.plot(x_train[:, 0], x_train[:, 1], 'ro')
+plt.axis([-1, 11, -1, 2])
+plt.show()
 
 y_lables = np.array([-1, -1, 1, 1])
 
