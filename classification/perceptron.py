@@ -1,6 +1,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn import preprocessing
 
 
 class Perceptron:
@@ -69,24 +70,24 @@ class Evaluation:
         minus_one = np.random.normal(loc=0, scale=1, size=(10,2))
         plus_one = np.random.normal(loc=3, scale=1, size=(10,2))
         x_train = np.concatenate((minus_one, plus_one))
+        x_train_scaled = preprocessing.scale(x_train)
 
         y_lables = np.array([-1 for _ in range(10)] + [1 for _ in range(10)])
 
-        self.perceptron.fit(x_train=x_train, y_labels=y_lables)
+        self.perceptron.fit(x_train=x_train_scaled, y_labels=y_lables)
 
-        plt.plot(minus_one[:, 0], minus_one[:, 1], 'ro')
-        plt.plot(plus_one[:, 0], plus_one[:, 1], 'go')
+        plt.plot(x_train_scaled[0:10, 0], x_train_scaled[0:10, 1], 'ro')
+        plt.plot(x_train_scaled[10:20, 0], x_train_scaled[10:20, 1], 'go')
         x = np.linspace(-5, 10, 100)
         y = -(self.perceptron.weights[0] + x*self.perceptron.weights[2])/self.perceptron.weights[1]
         plt.plot(x, y, label='decision boundary')
         plt.legend(loc='upper left')
         plt.show()
-        return x_train, y_lables
+        return x_train_scaled, y_lables
 
     def viz_weights_history(self, x_train, y_label):
         plt.plot(x_train[0:10, 0], x_train[0:10, 1], 'ro')
         plt.plot(x_train[10:20, 0], x_train[10:20, 1], 'go')
-        #plt.plot(plus_one[:, 0], plus_one[:, 1], 'go')
         for curr_weight in range(self.perceptron.weights_history.shape[0]):
             x = np.linspace(-5, 10, 100)
             y = -(self.perceptron.weights_history[curr_weight, 0] + x*self.perceptron.weights_history[curr_weight, 2])/self.perceptron.weights_history[curr_weight, 1]
@@ -95,6 +96,6 @@ class Evaluation:
         plt.show()
 
 
-eval = Evaluation(eta=0.005, epochs=10)
+eval = Evaluation(eta=0.05, epochs=10)
 x_train, y_label = eval.lineraly_separable()
-eval.viz_weights_history(x_train, y_label)
+#eval.viz_weights_history(x_train, y_label)
