@@ -37,9 +37,11 @@ class Perceptron:
 
         # weights is a with 1 + Ndims elements
         self.weights = np.random.normal(loc = 0, scale = 1, size = x_train_with_bias.shape[0])
+        self.weights_history = np.array([self.weights])
         for epoch in range(self.epochs):
             y_current = self.__threshold_array__(np.dot(self.weights, x_train_with_bias))
             self.weights = self.weights + np.dot(self.eta * (y_labels - y_current), x_train_with_bias.transpose())
+            self.weights_history = np.append(self.weights_history, np.array([self.weights]), axis=0)
 
         print("Training completed successfully, weights: [{}]".format(self.weights))
 
@@ -64,8 +66,8 @@ class Evaluation:
         self.perceptron = Perceptron(eta, epochs)
 
     def lineraly_separable(self):
-        minus_one = np.random.normal(loc = 0, scale = 1, size = (10,2))
-        plus_one = np.random.normal(loc = 3, scale = 1, size = (10,2))
+        minus_one = np.random.normal(loc=0, scale=1, size=(10,2))
+        plus_one = np.random.normal(loc=3, scale=1, size=(10,2))
         x_train = np.concatenate((minus_one, plus_one))
 
         y_lables = np.array([-1 for _ in range(10)] + [1 for _ in range(10)])
@@ -74,11 +76,25 @@ class Evaluation:
 
         plt.plot(minus_one[:, 0], minus_one[:, 1], 'ro')
         plt.plot(plus_one[:, 0], plus_one[:, 1], 'go')
-        x = np.linspace(-5,10,100)
+        x = np.linspace(-5, 10, 100)
         y = -(self.perceptron.weights[0] + x*self.perceptron.weights[2])/self.perceptron.weights[1]
-        plt.plot(x, y, label = 'decision boundary')
+        plt.plot(x, y, label='decision boundary')
+        plt.legend(loc='upper left')
+        plt.show()
+        return x_train, y_lables
+
+    def viz_weights_history(self, x_train, y_label):
+        plt.plot(x_train[0:10, 0], x_train[0:10, 1], 'ro')
+        plt.plot(x_train[10:20, 0], x_train[10:20, 1], 'go')
+        #plt.plot(plus_one[:, 0], plus_one[:, 1], 'go')
+        for curr_weight in range(self.perceptron.weights_history.shape[0]):
+            x = np.linspace(-5, 10, 100)
+            y = -(self.perceptron.weights_history[curr_weight, 0] + x*self.perceptron.weights_history[curr_weight, 2])/self.perceptron.weights_history[curr_weight, 1]
+            plt.plot(x, y, label="bound(epoch={})".format(curr_weight))
+        plt.legend(loc='upper left')
         plt.show()
 
 
-eval = Evaluation(eta = 0.5, epochs = 10)
-eval.lineraly_separable()
+eval = Evaluation(eta=0.005, epochs=10)
+x_train, y_label = eval.lineraly_separable()
+eval.viz_weights_history(x_train, y_label)
