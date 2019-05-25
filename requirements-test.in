@@ -1,0 +1,9 @@
+
+coverage
+pytest
+pytest-cov
+flake8
+zest.releaser
+mock
+nose
+

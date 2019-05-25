@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
 
-
 class Perceptron:
 
     def __init__(self, eta, epochs):
